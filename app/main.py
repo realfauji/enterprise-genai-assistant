@@ -7,16 +7,26 @@ from app.models.chat_message import ChatMessage
 from app.api.auth_routes import router as auth_router
 from app.api.chat_routes import router as chat_router
 from app.api.session_routes import router as session_router
+from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 import app.db.init_db
 
 
-app = FastAPI(title="Enterprise GenAI Platform")
-
-
-@app.on_event("startup")
-async def on_startup():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    yield
+
+app = FastAPI(title="Enterprise GenAI Platform", lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Later replace with Streamlit URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 async def health_check():

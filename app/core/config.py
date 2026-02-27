@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     HF_API_KEY: str
     
     DAILY_TOKEN_LIMIT: int
+    
+    BACKEND_URL: str
 
     class Config:
         env_file = ".env"
