@@ -8,17 +8,18 @@ from app.api.auth_routes import router as auth_router
 from app.api.chat_routes import router as chat_router
 from app.api.session_routes import router as session_router
 from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager
+# from contextlib import asynccontextmanager
 import app.db.init_db
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    yield
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     async with engine.begin() as conn:
+#         await conn.run_sync(Base.metadata.create_all)
+#     yield
 
-app = FastAPI(title="Enterprise GenAI Platform", lifespan=lifespan)
+# app = FastAPI(title="Enterprise GenAI Platform", lifespan=lifespan)
+app = FastAPI(title="Enterprise GenAI Platform")
 
 app.add_middleware(
     CORSMiddleware,
