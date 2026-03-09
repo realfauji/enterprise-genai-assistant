@@ -44,6 +44,7 @@ async def upload_document(file:UploadFile = File(...), current_user=Depends(get_
         # save file
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
+        file.file.close()
         
         documents = load_documents(str(file_path))
         chunks = split_documents(documents)
@@ -51,6 +52,8 @@ async def upload_document(file:UploadFile = File(...), current_user=Depends(get_
         
         file_path.unlink(missing_ok=True)
     except Exception as e:
+        import traceback
+        print("UPLOAD ERROR:", traceback.format_exc())
         raise HTTPException(status_code=400, detail=str(e))
 
     return {"message": "Document indexed successfully"}
