@@ -12,7 +12,7 @@ from app.langchain_layer.loaders import load_documents
 from app.langchain_layer.splitter import split_documents
 from app.langchain_layer.vector_store import add_documents_to_vectorstore
 from sqlalchemy import select
-import shutil
+import shutil, uuid
 
 
 router = APIRouter(prefix="/sessions", tags=["Sessions"])
@@ -32,14 +32,24 @@ async def create_session(db:AsyncSession = Depends(get_db), current_user=Depends
 
 @router.post("/upload")
 async def upload_document(file:UploadFile = File(...), current_user=Depends(get_current_user)):
-    file_path = UPLOAD_DIR / file.filename
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    # file_path = UPLOAD_DIR / file.filename
+    # with open(file_path, "wb") as buffer:
+    #     shutil.copyfileobj(file.file, buffer)
 
     try:
+        # unique filename
+        unique_name = f"{uuid.uuid4()}_{file.filename}"
+        file_path = UPLOAD_DIR / unique_name
+
+        # save file
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        
         documents = load_documents(str(file_path))
         chunks = split_documents(documents)
         add_documents_to_vectorstore(user_id=current_user.id, documents=chunks)
+        
+        file_path.unlink(missing_ok=True)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
