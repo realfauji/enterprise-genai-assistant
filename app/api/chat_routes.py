@@ -97,7 +97,7 @@ async def send_message(session_id:int, message:ChatMessageCreate, db:AsyncSessio
     cost = (total_tokens / 1000) * cost_per_1k_tokens
 
     # Auto-generate title if first message
-    if len(messages) == 0:  # only first user message exists
+    if len(messages) == 1:  # only first user message exists
         short_title = create_auto_title(provider=None, question=message.content)
         result_session = await db.execute(
             select(ChatSession).where(ChatSession.id == session_id)

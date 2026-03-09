@@ -11,14 +11,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import app.db.init_db
 
-app = FastAPI(title="Enterprise GenAI Platform", lifespan=lifespan)
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
 
+app = FastAPI(title="Enterprise GenAI Platform", lifespan=lifespan)
 # app = FastAPI(title="Enterprise GenAI Platform")
 
 app.add_middleware(
