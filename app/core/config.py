@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     DAILY_TOKEN_LIMIT: int
     
     BACKEND_URL: str
+    VECTOR_DB_URL: str
 
     class Config:
         env_file = ".env"
